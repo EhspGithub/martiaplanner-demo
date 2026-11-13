@@ -90,7 +90,7 @@ define(['./workbox-afac4cd2'], (function (workbox) { 'use strict';
     "revision": "ee69aab270bede5c7b6ca7be1859ac3d"
   }, {
     "url": "index.html",
-    "revision": "eb06e2e953d0686b1402eeb66febf313"
+    "revision": "b4111cf5ad1e1f496b37bd11d23a16dd"
   }, {
     "url": "icon.svg",
     "revision": "88802281a383f8771bbebc8d88f0b8d9"
@@ -98,13 +98,13 @@ define(['./workbox-afac4cd2'], (function (workbox) { 'use strict';
     "url": "apple-touch-icon.png",
     "revision": "cd7abdd59f38fbe38f866b84c2f6c6f3"
   }, {
-    "url": "MartiaPlanner-v1.6.0.html",
-    "revision": "e075dffd3184123798038bcb7e150708"
+    "url": "MartiaPlanner-v1.7.0.html",
+    "revision": "349c714a12a39e042aad7d1cb7afbe18"
   }, {
-    "url": "assets/index-UAEtKwQ4.css",
+    "url": "assets/index-i_tQmKR9.js",
     "revision": null
   }, {
-    "url": "assets/index-Cm24uiku.js",
+    "url": "assets/index-CmgOYbBq.css",
     "revision": null
   }, {
     "url": "assets/aistudio/image_ead8f0ff.png",
