@@ -1,0 +1,6 @@
+{
+  "name": "MartiaPlanner — سامانه مدیریت مطالعه و برنامه‌ریزی دانش‌آموزی",
+  "description": "اپلیکیشن هوشمند برنامه‌ریزی درسی، ثبت عملکرد واقعی، تقویم شمسی و تحلیل مطالعه ویژه دانش‌آموزان متوسطه اول با پایگاه داده SQLite و نسخه دسکتاپ/اندروید Tauri 2.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
