@@ -17,6 +17,7 @@ import {
   ChevronDown,
   Eye,
   CloudOff,
+  UserCircle2,
 } from 'lucide-react';
 import type { AppBootstrapData } from './types.ts';
 import { api } from './services/api.ts';
@@ -45,10 +46,20 @@ const MetricsDefinitionsView = lazy(() =>
     default: m.MetricsDefinitionsView,
   }))
 );
+const UserProfileView = lazy(() =>
+  import('./components/UserProfileView.tsx').then((m) => ({ default: m.UserProfileView }))
+);
 
 const COMPREHENSIVE_TABLE_ACCORDION_ID = 'metric-comprehensive-master-table';
 
-type ActiveMenu = 'dashboard' | 'planner' | 'reports' | 'guide' | 'settings' | 'subjects';
+type ActiveMenu =
+  | 'dashboard'
+  | 'planner'
+  | 'reports'
+  | 'guide'
+  | 'settings'
+  | 'subjects'
+  | 'profile';
 
 export default function App() {
   const [activeMenu, setActiveMenu] = useState<ActiveMenu>('planner');
@@ -172,7 +183,7 @@ export default function App() {
     return () => window.removeEventListener('martia:cloud-sync-updated', onCloudUpdated);
   }, [loadBootstrap]);
 
-  const handleSelectMoreItem = (target: 'settings' | 'subjects') => {
+  const handleSelectMoreItem = (target: 'profile' | 'settings' | 'subjects') => {
     setActiveMenu(target);
     setIsMorePopoverOpen(false);
   };
@@ -183,7 +194,8 @@ export default function App() {
     setIsMorePopoverOpen(false);
   }, []);
 
-  const isMoreSectionActive = activeMenu === 'settings' || activeMenu === 'subjects';
+  const isMoreSectionActive =
+    activeMenu === 'profile' || activeMenu === 'settings' || activeMenu === 'subjects';
 
   return (
     <div
@@ -316,6 +328,18 @@ export default function App() {
 
             {isMorePopoverOpen && (
               <div className="absolute left-0 top-full mt-2 w-48 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-1.5 shadow-xl shadow-indigo-950/15 space-y-1 z-50">
+                <button
+                  type="button"
+                  onClick={() => handleSelectMoreItem('profile')}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-extrabold transition-colors cursor-pointer ${
+                    activeMenu === 'profile'
+                      ? 'bg-indigo-600 text-white'
+                      : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  }`}
+                >
+                  <UserCircle2 className="w-4 h-4 shrink-0" />
+                  <span>پروفایل کاربری</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => handleSelectMoreItem('settings')}
@@ -492,6 +516,15 @@ export default function App() {
                 />
               </div>
             )}
+
+            {visitedMenus.has('profile') && (
+              <div className={activeMenu === 'profile' ? 'block' : 'hidden'}>
+                <UserProfileView
+                  subjects={bootstrapData.subjects}
+                  refreshTrigger={dataMutationTick}
+                />
+              </div>
+            )}
           </Suspense>
         )}
       </main>
@@ -511,6 +544,18 @@ export default function App() {
         {isMorePopoverOpen && (
           <div className="pointer-events-auto mx-auto max-w-md mb-2.5 flex justify-end px-1">
             <div className="w-48 rounded-2xl border border-indigo-200 dark:border-slate-700 bg-gradient-to-b from-indigo-50/95 to-white/95 dark:from-slate-900/95 dark:to-slate-900/95 backdrop-blur-xl p-1.5 shadow-xl shadow-indigo-950/20 space-y-1">
+              <button
+                type="button"
+                onClick={() => handleSelectMoreItem('profile')}
+                className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-extrabold transition-colors cursor-pointer ${
+                  activeMenu === 'profile'
+                    ? 'bg-indigo-600 text-white'
+                    : 'text-slate-700 dark:text-slate-200 hover:bg-indigo-100/60 dark:hover:bg-slate-800'
+                }`}
+              >
+                <UserCircle2 className="w-4 h-4 shrink-0" />
+                <span>پروفایل کاربری</span>
+              </button>
               <button
                 type="button"
                 onClick={() => handleSelectMoreItem('settings')}

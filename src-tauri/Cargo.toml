@@ -1,6 +1,6 @@
 [package]
 name = "martia-planner"
-version = "1.21.1"
+version = "1.22.0"
 description = "MartiaPlanner — Student Study & Daily Activity Management App (Windows & Android)"
 authors = ["MartiaPlanner Team"]
 edition = "2021"

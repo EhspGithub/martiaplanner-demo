@@ -1332,7 +1332,7 @@ app.get('/api/backup/export', (_req, res) => {
     const data = {
       exportedAt: new Date().toISOString(),
       app: 'MartiaPlanner',
-      version: '1.21.1',
+      version: '1.22.0',
       schemaVersion: 2,
       activity_categories: db.prepare('SELECT * FROM activity_categories ORDER BY sort_order ASC').all(),
       study_activity_types: db.prepare('SELECT * FROM study_activity_types ORDER BY sort_order ASC').all(),
