@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Pillar 1: Global Safety Net (Default-Deny Catch-All)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Hardened Global Helpers
+    function isValidId(id) {
+      return id is string && id.size() >= 6 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation Blueprint for SharedWorkspace (Strict Schema, Size & Temporal Guards)
+    function isValidSharedWorkspace(data, workspaceId) {
+      return data.keys().hasAll([
+          'workspaceId',
+          'ownerId',
+          'lastUpdatedByUid',
+          'lastUpdatedByName',
+          'payloadJson',
+          'syncRevision',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'workspaceId',
+          'ownerId',
+          'lastUpdatedByUid',
+          'lastUpdatedByName',
+          'payloadJson',
+          'syncRevision',
+          'createdAt',
+          'updatedAt'
+        ])
+        && data.workspaceId is string
+        && data.workspaceId.size() >= 6
+        && data.workspaceId.size() <= 128
+        && data.workspaceId.matches('^[a-zA-Z0-9_\\-]+$')
+        && data.workspaceId == workspaceId
+        && data.ownerId is string
+        && data.ownerId.size() >= 1
+        && data.ownerId.size() <= 128
+        && data.ownerId.matches('^[a-zA-Z0-9_\\-]+$')
+        && data.lastUpdatedByUid is string
+        && data.lastUpdatedByUid.size() >= 1
+        && data.lastUpdatedByUid.size() <= 128
+        && data.lastUpdatedByUid.matches('^[a-zA-Z0-9_\\-]+$')
+        && data.lastUpdatedByName is string
+        && data.lastUpdatedByName.size() >= 1
+        && data.lastUpdatedByName.size() <= 120
+        && data.payloadJson is string
+        && data.payloadJson.size() >= 2
+        && data.payloadJson.size() <= 950000
+        && data.syncRevision is int
+        && data.syncRevision >= 1
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    match /workspaces/{workspaceId} {
+      // Capability-based direct read by exact secret workspaceId (no list scraping allowed)
+      allow get: if isValidId(workspaceId);
+      allow list: if false;
+
+      // Create shared workspace snapshot with strict schema and server timestamps
+      allow create: if isValidId(workspaceId)
+        && isValidSharedWorkspace(incoming(), workspaceId)
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      // Action-Based Update: Sync workspace state while preserving immutable fields
+      allow update: if isValidId(workspaceId)
+        && isValidSharedWorkspace(incoming(), workspaceId)
+        && incoming().ownerId == existing().ownerId
+        && incoming().workspaceId == existing().workspaceId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().syncRevision >= existing().syncRevision
+        && (
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'lastUpdatedByUid',
+            'lastUpdatedByName',
+            'payloadJson',
+            'syncRevision',
+            'updatedAt'
+          ])
+        );
+
+      allow delete: if false;
+    }
+  }
+}

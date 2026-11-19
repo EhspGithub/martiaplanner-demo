@@ -1,0 +1,76 @@
+{
+  "entities": {
+    "SharedWorkspace": {
+      "title": "SharedWorkspace",
+      "description": "Real-time shared planner database snapshot synchronized across collaborators (Person A and Person B).",
+      "type": "object",
+      "properties": {
+        "workspaceId": {
+          "type": "string",
+          "description": "Unique workspace identifier shared between collaborators",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "UID of the creator who initialized the workspace",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "lastUpdatedByUid": {
+          "type": "string",
+          "description": "UID of the user who performed the latest sync mutation",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "lastUpdatedByName": {
+          "type": "string",
+          "description": "Display name of the user who performed the latest sync mutation",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "payloadJson": {
+          "type": "string",
+          "description": "Serialized normalized backup state of MartiaPlanner (subjects, units, plans, performances, budgets, goals, coefficients)",
+          "minLength": 2,
+          "maxLength": 950000
+        },
+        "syncRevision": {
+          "type": "number",
+          "description": "Monotonically increasing revision counter for conflict detection"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server last update timestamp"
+        }
+      },
+      "required": [
+        "workspaceId",
+        "ownerId",
+        "lastUpdatedByUid",
+        "lastUpdatedByName",
+        "payloadJson",
+        "syncRevision",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/workspaces/{workspaceId}": {
+      "schema": {
+        "$ref": "#/entities/SharedWorkspace"
+      },
+      "description": "Stores shared real-time workspace snapshots so multiple users opening the same workspace ID see and edit the exact same planner data."
+    }
+  }
+}
